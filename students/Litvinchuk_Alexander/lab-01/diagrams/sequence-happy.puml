@@ -1,0 +1,49 @@
+@startuml sequence-happy
+
+actor User
+participant "Web UI" as UI
+participant "Pomodoro API" as API
+database "Database" as DB
+participant "Notification Service" as Notify
+
+User -> UI: Открыть список задач
+UI -> API: GET /tasks
+activate API
+API -> DB: Получить активные задачи
+DB --> API: tasks
+API --> UI: tasks
+deactivate API
+UI --> User: Показать задачи
+
+User -> UI: Выбрать задачу и нажать «Начать Pomodoro»
+UI -> API: POST /sessions/start (task_id)
+activate API
+
+API -> DB: Создать Pomodoro-сессию (ACTIVE)
+DB --> API: session_id
+
+API --> Notify: ScheduleTimer(session_id, 25m)
+activate Notify
+Notify --> API: OK
+deactivate Notify
+
+API --> UI: 201 Created (session_id)
+deactivate API
+UI --> User: Показать запущенную сессию
+
+Notify --> API: TimerFinished(session_id)
+activate API
+
+API -> DB: Обновить статус (FINISHED)
+API -> DB: Обновить статистику пользователя
+
+API --> Notify: SendSessionCompleted(session_id)
+activate Notify
+Notify --> API: OK
+deactivate Notify
+
+API --> UI: SessionFinished event
+deactivate API
+UI --> User: Показать уведомление о завершении
+
+@enduml
