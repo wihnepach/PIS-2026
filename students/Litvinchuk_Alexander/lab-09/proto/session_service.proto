@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package session;
+
+service SessionService {
+  rpc CreateSession (CreateSessionRequest) returns (SessionResponse);
+  rpc GetSession (GetSessionRequest) returns (SessionResponse);
+  rpc StreamActiveSessions (Empty) returns (stream SessionResponse);
+}
+
+message Empty {}
+
+message CreateSessionRequest {
+  string session_id = 1;
+  string task_id = 2;
+  string user_id = 3;
+  int32 duration_minutes = 4;
+}
+
+message GetSessionRequest {
+  string session_id = 1;
+}
+
+message SessionResponse {
+  string session_id = 1;
+  string task_id = 2;
+  string user_id = 3;
+  int32 duration_minutes = 4;
+  string status = 5;
+}

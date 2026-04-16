@@ -1,0 +1,36 @@
+@startuml Pomodoro Service - Simple Architecture
+
+title Pomodoro Session Service
+
+' ===== Layers =====
+
+package "Domain" {
+    class Task
+    class Session
+    class User
+}
+
+package "Application" {
+    class StartSessionUseCase
+    class SessionService
+}
+
+package "Infrastructure" {
+    class SessionController
+    class SessionRepository
+    class NotificationService
+}
+
+' ===== Flow =====
+
+SessionController --> StartSessionUseCase
+StartSessionUseCase --> SessionService
+
+SessionService --> Task
+SessionService --> Session
+SessionService --> User
+
+SessionService --> SessionRepository
+SessionService --> NotificationService
+
+@enduml

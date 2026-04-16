@@ -1,0 +1,35 @@
+version: "3.8"
+
+services:
+  app:
+    image: python:3.11
+    container_name: pomodoro-app
+    working_dir: /app
+    volumes:
+      - .:/app
+    command: >
+      sh -c "pip install fastapi uvicorn sqlalchemy psycopg2-binary &&
+             uvicorn main:app --host 0.0.0.0 --port 8000"
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql+psycopg2://postgres:Azino888@db:5432/pomodoro_db
+    depends_on:
+      - db
+    restart: always
+
+  db:
+    image: postgres:15
+    container_name: pomodoro-postgres
+    environment:
+      POSTGRES_DB: pomodoro_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: Azino888
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    restart: always
+
+volumes:
+  pgdata:
